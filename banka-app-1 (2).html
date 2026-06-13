@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odea Bank</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body {
+    background:#f4f4f4;
+    display:flex;
+    justify-content:center;
+    padding:20px;
+  }
+  .phone {
+    width:380px;
+    background:#fff;
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  }
+  .header {
+    background:linear-gradient(135deg,#c81e2d,#a3121f);
+    color:#fff;
+    padding:24px 20px 40px;
+    position:relative;
+  }
+  .header .top-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    opacity:0.85;
+    margin-bottom:18px;
+  }
+  .header .greeting {
+    font-size:14px;
+    opacity:0.9;
+  }
+  .header .name {
+    font-size:22px;
+    font-weight:700;
+    margin-top:2px;
+  }
+  .balance-card {
+    background:#fff;
+    color:#1a1a1a;
+    border-radius:18px;
+    padding:20px;
+    margin:-26px 16px 0;
+    box-shadow:0 8px 20px rgba(168,18,31,0.25);
+    position:relative;
+    z-index:2;
+  }
+  .balance-card .label {
+    font-size:13px;
+    color:#888;
+    margin-bottom:6px;
+  }
+  .balance-card .amount {
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:0.5px;
+  }
+  .balance-card .amount span {
+    font-size:16px;
+    font-weight:600;
+    color:#c81e2d;
+  }
+  .quick-actions {
+    display:flex;
+    justify-content:space-between;
+    padding:24px 18px 8px;
+  }
+  .quick-actions .action {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    width:70px;
+    text-align:center;
+    font-size:11px;
+    color:#333;
+  }
+  .quick-actions .icon {
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    background:#fdecee;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    color:#c81e2d;
+  }
+  .section-title {
+    padding:18px 18px 8px;
+    font-size:15px;
+    font-weight:700;
+    color:#1a1a1a;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .section-title a {
+    font-size:12px;
+    color:#c81e2d;
+    text-decoration:none;
+    font-weight:600;
+  }
+  .transaction {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 18px;
+    border-bottom:1px solid #f1f1f1;
+  }
+  .transaction .left {
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .transaction .icon-box {
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    background:#fdecee;
+    color:#c81e2d;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:14px;
+  }
+  .transaction .info .title {
+    font-size:13px;
+    font-weight:600;
+    color:#1a1a1a;
+  }
+  .transaction .info .date {
+    font-size:11px;
+    color:#999;
+    margin-top:2px;
+  }
+  .transaction .amount {
+    font-size:13px;
+    font-weight:700;
+  }
+  .amount.negative { color:#c81e2d; }
+  .amount.positive { color:#1a8a4a; }
+
+  .bottom-nav {
+    display:flex;
+    justify-content:space-around;
+    padding:14px 0;
+    border-top:1px solid #eee;
+    margin-top:8px;
+  }
+  .bottom-nav .nav-item {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    font-size:10px;
+    color:#999;
+  }
+  .bottom-nav .nav-item.active {
+    color:#c81e2d;
+    font-weight:700;
+  }
+  .bottom-nav .nav-item .dot {
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+  }
+  .bottom-nav .nav-item.active .dot {
+    background:#fdecee;
+  }
+  .disclaimer {
+    text-align:center;
+    font-size:10px;
+    color:#bbb;
+    padding:10px 20px 20px;
+  }
+  .lock-overlay {
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    background:linear-gradient(135deg,#c81e2d,#a3121f);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+  }
+  .lock-box {
+    background:#fff;
+    border-radius:18px;
+    padding:30px 26px;
+    width:300px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+  }
+  .lock-box .lock-icon {
+    font-size:36px;
+    color:#c81e2d;
+    margin-bottom:10px;
+  }
+  .lock-box h2 {
+    font-size:17px;
+    color:#1a1a1a;
+    margin-bottom:6px;
+  }
+  .lock-box p {
+    font-size:12px;
+    color:#999;
+    margin-bottom:18px;
+  }
+  .lock-box input {
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:16px;
+    text-align:center;
+    letter-spacing:4px;
+    margin-bottom:12px;
+    outline:none;
+  }
+  .lock-box input:focus {
+    border-color:#c81e2d;
+  }
+  .lock-box button {
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#c81e2d;
+    color:#fff;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .lock-box button:hover {
+    background:#a3121f;
+  }
+  .lock-box .error-msg {
+    color:#c81e2d;
+    font-size:12px;
+    margin-top:8px;
+    min-height:14px;
+  }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="lock-overlay" id="lockOverlay">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <h2>OdeaBank Mobil</h2>
+    <p>Devam etmek için şifrenizi giriniz</p>
+    <input type="password" id="pwInput" maxlength="6" placeholder="••••••" inputmode="numeric">
+    <button onclick="checkPassword()">Giriş Yap</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+</div>
+
+<div class="phone">
+
+  <div class="header">
+    <div class="top-row">
+      <span>Odea Bank</span>
+      <span>9:41</span>
+    </div>
+    <div class="greeting">İyi günler,</div>
+    <div class="name">Kürşat TUNCER</div>
+  </div>
+
+  <div class="balance-card">
+    <div class="label">Vadesiz Hesap Bakiyesi</div>
+    <div class="amount">3.618.000,13 <span>TL</span></div>
+  </div>
+
+  <div class="quick-actions">
+    <div class="action" onclick="actionClick('Para Gönder')">
+      <div class="icon">↗</div>
+      Para Gönder
+    </div>
+    <div class="action" onclick="actionClick('Para İste')">
+      <div class="icon">↙</div>
+      Para İste
+    </div>
+    <div class="action" onclick="actionClick('Fatura Öde')">
+      <div class="icon">⚡</div>
+      Fatura Öde
+    </div>
+    <div class="action" onclick="actionClick('Yükle')">
+      <div class="icon">＋</div>
+      Yükle
+    </div>
+  </div>
+
+  <div class="section-title">
+    Son İşlemler
+    <a href="#">Tümünü Gör</a>
+  </div>
+
+  <div class="transaction">
+    <div class="left">
+      <div class="icon-box">M</div>
+      <div class="info">
+        <div class="title">City Center avm</div>
+        <div class="date">13 Haziran 2026</div>
+      </div>
+    </div>
+    <div class="amount negative">-340,50 TL</div>
+  </div>
+
+  <div class="transaction">
+    <div class="left">
+      <div class="icon-box">+</div>
+      <div class="info">
+        <div class="title">Trendyol iade</div>
+        <div class="date">10 Haziran 2026</div>
+      </div>
+    </div>
+    <div class="amount positive">+26.000,00 TL</div>
+  </div>
+
+  <div class="transaction">
+    <div class="left">
+      <div class="icon-box">E</div>
+      <div class="info">
+        <div class="title">Gediz Elektirik</div>
+        <div class="date">8 Haziran 2026</div>
+      </div>
+    </div>
+    <div class="amount negative">-1.612,30 TL</div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="dot">⌂</div>
+      Ana Sayfa
+    </div>
+    <div class="nav-item">
+      <div class="dot">↔</div>
+      Transfer
+    </div>
+    <div class="nav-item">
+      <div class="dot">💳</div>
+      Kartlarım
+    </div>
+    <div class="nav-item">
+      <div class="dot">☰</div>
+      Daha Fazla
+    </div>
+  </div>
+
+  <div class="disclaimer">
+      
+  </div>
+
+</div>
+
+<script>
+  function checkPassword() {
+    var input = document.getElementById('pwInput').value;
+    var err = document.getElementById('errorMsg');
+    if (input === '242800') {
+      document.getElementById('lockOverlay').classList.add('hidden');
+      err.textContent = '';
+    } else {
+      err.textContent = 'Şifre hatalı, lütfen tekrar deneyin.';
+    }
+  }
+
+  document.getElementById('pwInput').addEventListener('keyup', function(e){
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  function actionClick(name) {
+    alert(name + ' işlemi seçildi.');
+  }
+</script>
+
+</body>
+</html>
